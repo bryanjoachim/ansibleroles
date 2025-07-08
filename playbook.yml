@@ -1,0 +1,40 @@
+---
+- name: Deploy web server
+  hosts: web
+  become: true
+  roles:
+    - webserver # This line includes your new webserver role
+
+- name: Install MySQL server on db server
+  hosts: db
+  become: yes
+  tasks:
+    - name: Download MySQL community repo RPM for EL9
+      get_url:
+        url: https://repo.mysql.com/mysql80-community-release-el9-1.noarch.rpm
+        dest: /tmp/mysql80-community-release-el9-1.noarch.rpm
+        mode: '0644'
+
+    - name: Install MySQL community repo RPM
+      yum:
+        name: /tmp/mysql80-community-release-el9-1.noarch.rpm
+        state: present
+
+    - name: Import MySQL GPG key (2023 version)
+      rpm_key:
+        state: present
+        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
+      
+    - name: Clean yum cache
+      command: yum clean all
+
+    - name: Install MySQL server package
+      yum:
+        name: mysql-server
+        state: present
+
+    - name: Ensure MySQL service is started and enabled
+      service:
+        name: mysqld
+        state: started
+        enabled: true
