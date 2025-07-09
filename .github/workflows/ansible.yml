@@ -25,9 +25,7 @@ jobs:
           pip install ansible # Install Ansible
 
       - name: Configure SSH for Ansible
-        # This step is crucial for Ansible to connect to your target servers.
-        # It assumes you have SSH keys for your target servers stored as GitHub Secrets.
-        # Replace `ANSIBLE_SSH_PRIVATE_KEY` with the name of your secret.
+        
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ANSIBLE_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
@@ -39,15 +37,11 @@ jobs:
         run: |
           ansible-playbook -i inventory.ini playbook.yml
         env:
-          # You might need to pass sensitive variables or credentials as environment variables
-          # For example, if your playbook needs a database password, you'd pass it here.
-          # DONT_USE_THIS_FOR_SENSITIVE_DATA: "{{ secrets.SOME_OTHER_SECRET }}"
-          # For this example, no extra env vars are needed beyond SSH key.
-          ANSIBLE_HOST_KEY_CHECKING: "False" # Temporarily disable host key checking for simplicity. Not recommended for production.
+          
+          ANSIBLE_HOST_KEY_CHECKING: "False" 
 
       - name: Verify Playbook Execution (Optional)
-        # Add tasks here to verify the changes on the target server
-        # For example, check if Apache is running or if a file exists
+        
         run: |
           echo "Playbook execution completed. Manual verification on target servers is recommended."
           # Example: ansible slave1 -m shell -a "systemctl is-active httpd"
