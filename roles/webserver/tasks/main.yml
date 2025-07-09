@@ -1,3 +1,6 @@
+---
+# tasks/main.yml for webserver role
+
 - name: Update package cache (webserver role)
   yum:
     name: '*'
@@ -17,9 +20,17 @@
     group: apache
     mode: '0755'
 
+- name: Deploy Apache virtual host configuration
+  template:
+    src: vhost.conf.j2
+    dest: "/etc/httpd/conf.d/{{ webserver_server_name | regex_replace('\\.', '_') }}.conf" # Replace dots with underscores for filename
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart webserver # Notify handler if the configuration file changes
+
 - name: Ensure web server is running and enabled ({{ webserver_service_name }})
   service:
     name: "{{ webserver_service_name }}"
     state: started
     enabled: true
-
