@@ -1,35 +1,25 @@
----
-# tasks/main.yml for webserver role
-
 - name: Update package cache (webserver role)
   yum:
     name: '*'
     state: latest
-  tags:
-    - webserver_install
 
 - name: Install web server package ({{ webserver_package_name }})
   yum:
     name: "{{ webserver_package_name }}"
     state: present
-  notify: restart webserver
-  tags:
-    - webserver_install
+  notify: restart webserver # Notify handler if Apache is installed or updated
 
-- name: Configure web server (placeholder)
-  # This task can be expanded to copy a custom httpd.conf or create virtual host files.
-  # For this example, we'll just ensure the default configuration is implicitly used
-  # by the service starting. If you need custom configuration, you would use
-  # the 'template' or 'copy' module here.
-  debug:
-    msg: "Web server {{ webserver_package_name }} configured. Document root: {{ webserver_document_root }}, Server Name: {{ webserver_server_name }}"
-  tags:
-    - webserver_configure
+- name: Create web server document root directory
+  file:
+    path: "{{ webserver_document_root }}"
+    state: directory
+    owner: apache
+    group: apache
+    mode: '0755'
 
 - name: Ensure web server is running and enabled ({{ webserver_service_name }})
   service:
     name: "{{ webserver_service_name }}"
     state: started
     enabled: true
-  tags:
-    - webserver_service
+
