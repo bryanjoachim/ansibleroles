@@ -1,0 +1,17 @@
+# templates/vhost.conf.j2 for webserver role
+# This template configures a basic Apache virtual host using Ansible variables.
+
+<VirtualHost *:"{{ webserver_vhost_port }}">
+    ServerAdmin {{ webserver_admin_email }}
+    ServerName {{ webserver_server_name }}
+    DocumentRoot "{{ webserver_document_root }}"
+
+    <Directory "{{ webserver_document_root }}">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog "{{ webserver_log_dir }}/{{ webserver_server_name | regex_replace('\\.', '_') }}-error.log"
+    CustomLog "{{ webserver_log_dir }}/{{ webserver_server_name | regex_replace('\\.', '_') }}-access.log" combined
+</VirtualHost>
