@@ -4,4 +4,4 @@
 webserver_package_name: httpd
 webserver_service_name: httpd
 webserver_document_root: /var/www/html
-webserver_server_name: your_web_server.example.com # Replace with your desired server name
+webserver_server_name: 44.201.9.70 # Replace with your desired server name
