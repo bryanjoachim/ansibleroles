@@ -37,7 +37,7 @@ jobs:
       - name: Run Ansible Playbook
         # Ensure your inventory file (e.g., 'hosts.ini') and playbook.yml are in the repo root
         run: |
-          ansible-playbook -i hosts.ini playbook.yml
+          ansible-playbook -i inventory.ini playbook.yml
         env:
           # You might need to pass sensitive variables or credentials as environment variables
           # For example, if your playbook needs a database password, you'd pass it here.
