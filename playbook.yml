@@ -5,36 +5,26 @@
   roles:
     - webserver # This line includes your new webserver role
 
-- name: Install MySQL server on db server
+- name: Install MariaDB server on db server
   hosts: db
   become: yes
   tasks:
-    - name: Download MySQL community repo RPM for EL9
-      get_url:
-        url: https://repo.mysql.com/mysql80-community-release-el9-1.noarch.rpm
-        dest: /tmp/mysql80-community-release-el9-1.noarch.rpm
-        mode: '0644'
-
-    - name: Install MySQL community repo RPM
+    - name: Update package cache for MariaDB installation
       yum:
-        name: /tmp/mysql80-community-release-el9-1.noarch.rpm
-        state: present
+        name: '*'
+        state: latest
+        update_cache: yes # Ensure cache is updated before searching for MariaDB
 
-    - name: Import MySQL GPG key (2023 version)
-      rpm_key:
-        state: present
-        key: https://repo.mysql.com/RPM-GPG-KEY-mysql-2023
-      
-    - name: Clean yum cache
-      command: yum clean all
-
-    - name: Install MySQL server package
+    - name: Install MariaDB server package
       yum:
-        name: mysql-server
+        # Amazon Linux 2023 typically uses 'mariadb105-server' or 'mariadb-server'
+        # 'mariadb105-server' is common for newer AL versions.
+        # If this fails, try 'mariadb-server'
+        name: mariadb105-server
         state: present
 
-    - name: Ensure MySQL service is started and enabled
+    - name: Ensure MariaDB service is started and enabled
       service:
-        name: mysqld
+        name: mariadb # The service name for MariaDB is usually 'mariadb'
         state: started
         enabled: true
